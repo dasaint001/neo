@@ -20,16 +20,12 @@ app.post('/user', async(req, res) => {
     try{
         const user = await User.create(req.body)
         const emailRegexp = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+        const alpha = /^[A-Za-z\s]+$/;
 
-        if (typeof req.body.firstName != "string" || typeof req.body.lastName != "string") {
-            res.status(400).json({message: "one of the names is not a string"})
-            console.log('This is not string');
-        }
-        if(emailRegexp.test(req.body.email) == false){
-            res.status(400).json({message})
-            console.log('This is not a valid email');
-        }
-        else{
+        if (alpha.test(req.body.firstName) == false || alpha.test(req.body.lastName) == false || emailRegexp.test(req.body.email) == false) {
+            res.status(400).json({message: 'only alphabets are allowed for name fields and a valid email address'})
+            //console.log('This is not string');
+        } else{
             { res.status(201).json({ 
                 status: true,
                 data: user
