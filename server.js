@@ -19,13 +19,14 @@ app.post('/user', async(req, res) => {
 
     try{
         const user = await User.create(req.body)
+        
         const email = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
         const alpha = /^[A-Za-z\s]+$/;
         const number = /^[0-9]+$/;
 
+        //field input validation
         if (alpha.test(req.body.firstName) == false || alpha.test(req.body.lastName) == false || email.test(req.body.email) == false || number.test(req.body.phone) == false) {
             res.status(400).json({message: 'only alphabets are allowed for name fields and a valid email address'})
-            //console.log('This is not string');
         } else{
             { res.status(201).json({ 
                 status: true,
