@@ -1,54 +1,27 @@
-const express = require('express')
-const mongoose = require('mongoose')
-const Email = require('mongoose-type-email')
-const User = require('./models/userModel')
-const app = express()
+const express = require("express");
+const validator = require("./validations");
+const app = express();
 
-app.use(express.json())
-
-//this is a test api for the checks
-app.get('/', (req, res, next)=> {
-    res.status(200).json({ 
-        message: true,
-        data: 'it works'
-    })
-})
+app.use(express.json());
 
 //endpoint to add user
-app.post('/user', async(req, res) => {
+app.post("/validate", validator.validate, (req, res) => {
+  res.status(200).json({
+    status: true,
+  });
+});
 
-    try{
-        const user = await User.create(req.body)
-        
-        const email = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
-        const alpha = /^[A-Za-z\s]+$/;
-        const number = /^[0-9]+$/;
+// Handling Errors
+app.use((err, req, res, next) => {
+  console.log(err);
+  err.statusCode = err.statusCode || 500;
+  err.message = err.message || "Internal Server Error";
+  res.status(err.statusCode).json({
+    message: err.message,
+  });
+});
 
-        //field input validation
-        if (alpha.test(req.body.firstName) == false || alpha.test(req.body.lastName) == false || email.test(req.body.email) == false || number.test(req.body.phone) == false) {
-            res.status(400).json({message: 'only alphabets are allowed for name fields and a valid email address'})
-        } else{
-            { res.status(201).json({ 
-                status: true,
-                data: user
-            })}
-        }
-       
-    }catch (error){
-        console.log(error.message);
-        res.status(500).json({message: error.message})
-    }
-})
-
-//mongodb connection
-mongoose.connect('mongodb+srv://admin:aTTiTude@neoapi.ilvcnzx.mongodb.net/neoapi?retryWrites=true&w=majority')
-.then(() => {
-
-    console.log('connected to MongDB')
-    app.listen(3000, () => {
-        console.log('api is running  on port 3000')
-    });
-   
-}).catch((error) => {
-    console.log(error)
-})
+console.log("working");
+app.listen(3000, () => {
+  console.log("api is running  on port 3000");
+});
