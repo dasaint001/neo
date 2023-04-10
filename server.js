@@ -4,7 +4,7 @@ const app = express();
 
 app.use(express.json());
 
-//endpoint to add user
+//endpoint to validate payload
 app.post("/validate", validator.validate, (req, res) => {
   res.status(200).json({
     status: true,
